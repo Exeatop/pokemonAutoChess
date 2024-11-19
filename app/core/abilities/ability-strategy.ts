@@ -1,15 +1,14 @@
 import { Transfer } from "../../types"
-import { Ability } from "../../types/enum/Ability"
 import { Effect } from "../../types/enum/Effect"
-import { Item } from "../../types/enum/Item"
 import { Passive } from "../../types/enum/Passive"
 import { Synergy } from "../../types/enum/Synergy"
 import { distanceC } from "../../utils/distance"
 import Board from "../board"
 import { PokemonEntity } from "../pokemon-entity"
 import PokemonState from "../pokemon-state"
-import { AbilityStrategies } from "./abilities"
 import { min } from "../../utils/number"
+import { triggerItemEffects } from "../items"
+import { EffectClass } from "../../types/enum/EffectClass"
 
 export class AbilityStrategy {
   copyable = true // if true, can be copied by mimic, metronome...
@@ -61,34 +60,21 @@ export class AbilityStrategy {
       }
     })
 
-    if (pokemon.items.has(Item.AQUA_EGG)) {
-      pokemon.addPP(20, pokemon, 0, false)
-    }
-
-    if (pokemon.items.has(Item.STAR_DUST)) {
-      pokemon.addShield(Math.round(0.5 * pokemon.maxPP), pokemon, 0, false)
-      pokemon.count.starDustCount++
-    }
-
-    if (pokemon.items.has(Item.LEPPA_BERRY)) {
-      pokemon.eatBerry(Item.LEPPA_BERRY)
-    }
-
-    if (pokemon.items.has(Item.COMFEY)) {
-      AbilityStrategies[Ability.FLORAL_HEALING].process(
+    triggerItemEffects(
+      EffectClass.ABILITY,
+      {
         pokemon,
         state,
         board,
         target,
-        crit,
-        true
-      )
-    }
+        crit
+    })
 
     if (pokemon.passive === Passive.SLOW_START && pokemon.count.ult === 1) {
       pokemon.addAttackSpeed(30, pokemon, 0, false)
       pokemon.addAttack(10, pokemon, 0, false)
     }
+
   }
 }
 
