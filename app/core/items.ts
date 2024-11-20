@@ -27,8 +27,10 @@ export function triggerItemEffects(
 
 function triggerAquaEgg(
     effect_class: EffectClass,
-    params: {pokemon: PokemonEntity}
-){
+    params: {
+        pokemon: PokemonEntity,
+        board: Board
+}){
     switch (effect_class){
         case EffectClass.ABILITY:
             params.pokemon.addPP(20, params.pokemon, 0, false)
@@ -38,8 +40,10 @@ function triggerAquaEgg(
 
 function triggerStarDust(
     effect_class: EffectClass,
-    params: {pokemon: PokemonEntity}
-){
+    params: {
+        pokemon: PokemonEntity,
+        board: Board
+}){
     switch(effect_class){
         case EffectClass.ABILITY:
             params.pokemon.addShield(Math.round(0.5 * params.pokemon.maxPP), params.pokemon, 0, false)
@@ -50,8 +54,8 @@ function triggerStarDust(
 
 function triggerLeppaBerry(
     effect_class: EffectClass,
-    params: {pokemon: PokemonEntity}
-){
+    params: {pokemon: PokemonEntity
+}){
     switch(effect_class){
         case EffectClass.ABILITY:
             params.pokemon.eatBerry(Item.LEPPA_BERRY)
