@@ -48,6 +48,17 @@ export class AbilityStrategy {
       }
     )
 
+    triggerPassives(
+      EffectClass.ABILITY,
+      {
+        pokemon,
+        state,
+        board,
+        target,
+        crit
+      }
+    )
+
     board.forEach((x, y, enemy) => {
       if (
         enemy &&
