@@ -7,8 +7,10 @@ import Board from "../board"
 import { PokemonEntity } from "../pokemon-entity"
 import PokemonState from "../pokemon-state"
 import { min } from "../../utils/number"
-import { triggerItemEffects } from "../items"
+import { triggerItems } from "../items"
 import { EffectClass } from "../../types/enum/EffectClass"
+import { triggerPassives } from "../passives"
+import { triggerSynergies } from "../synergies"
 
 export class AbilityStrategy {
   copyable = true // if true, can be copied by mimic, metronome...
@@ -35,32 +37,37 @@ export class AbilityStrategy {
       })
     }
 
-    if (pokemon.types.has(Synergy.SOUND)) {
-      soundBoost(pokemon, board)
-      if (pokemon.passive === Passive.MEGA_LAUNCHER) {
-        soundBoost(pokemon, board)
-        soundBoost(pokemon, board)
+    triggerSynergies(
+      EffectClass.ABILITY,
+      {
+        pokemon,
+        state,
+        board,
+        target,
+        crit
       }
-    }
+    )
 
-    board.forEach((x, y, pkm) => {
+    board.forEach((x, y, enemy) => {
       if (
-        pkm?.passive === Passive.WATER_SPRING &&
-        pkm &&
-        pkm.team !== pokemon.team &&
-        pkm.id !== pokemon.id
+        enemy &&
+        enemy.team !== pokemon.team &&
+        enemy.id !== pokemon.id
       ) {
-        pkm.addPP(5, pkm, 0, false)
-        pkm.simulation.room.broadcast(Transfer.ABILITY, {
-          id: pokemon.simulation.id,
-          skill: pkm.skill,
-          positionX: pkm.positionX,
-          positionY: pkm.positionY
-        })
+        triggerPassives(
+          EffectClass.ENEMY_ABILITY,
+          {
+            pokemon: enemy,
+            state,
+            board,
+            target: pokemon,
+            crit: false
+          }
+        )
       }
     })
 
-    triggerItemEffects(
+    triggerItems(
       EffectClass.ABILITY,
       {
         pokemon,
@@ -69,11 +76,6 @@ export class AbilityStrategy {
         target,
         crit
     })
-
-    if (pokemon.passive === Passive.SLOW_START && pokemon.count.ult === 1) {
-      pokemon.addAttackSpeed(30, pokemon, 0, false)
-      pokemon.addAttack(10, pokemon, 0, false)
-    }
 
   }
 }
