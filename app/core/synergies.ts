@@ -74,7 +74,7 @@ export function triggerSoundEffects(
                 params.board.cells.forEach((ally)=>{
                     if(ally && ally.team === pokemon.team){
                         triggerPassives(
-                            EffectClass.SOUND_SYNERGY_ON_ABILITY,
+                            EffectClass.ALLY_SOUND_SYNERGY_ON_ABILITY,
                             {
                                 pokemon: ally,
                                 state: params.state,
