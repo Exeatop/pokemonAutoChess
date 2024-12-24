@@ -1288,21 +1288,7 @@ export class ExplosionStrategy extends AbilityStrategy {
     crit: boolean
   ) {
     super.process(pokemon, state, board, target, crit)
-    let damage = 0
-    switch (pokemon.stars) {
-      case 1:
-        damage = 50
-        break
-      case 2:
-        damage = 100
-        break
-      case 3:
-        damage = 200
-        break
-      default:
-        break
-    }
-
+    const damage = [50, 100, 200][pokemon.stars - 1] ?? 200
     const cells = board.getAdjacentCells(pokemon.positionX, pokemon.positionY)
 
     cells.forEach((cell) => {
@@ -1322,6 +1308,42 @@ export class ExplosionStrategy extends AbilityStrategy {
         damage,
         board,
         AttackType.SPECIAL,
+        pokemon,
+        crit
+      )
+    }
+  }
+}
+
+export class ChloroblastStrategy extends AbilityStrategy {
+  process(
+    pokemon: PokemonEntity,
+    state: PokemonState,
+    board: Board,
+    target: PokemonEntity,
+    crit: boolean
+  ) {
+    super.process(pokemon, state, board, target, crit)
+    const damage = [50, 100, 200][pokemon.stars - 1] ?? 200
+    const cells = board.getAdjacentCells(pokemon.positionX, pokemon.positionY)
+
+    cells.forEach((cell) => {
+      if (cell.value && pokemon.team != cell.value.team) {
+        cell.value.handleSpecialDamage(
+          damage,
+          board,
+          AttackType.SPECIAL,
+          pokemon,
+          crit
+        )
+      }
+    })
+
+    if (!pokemon.items.has(Item.PROTECTIVE_PADS)) {
+      pokemon.handleSpecialDamage(
+        0.5 * pokemon.hp,
+        board,
+        AttackType.TRUE,
         pokemon,
         crit
       )
@@ -7608,7 +7630,8 @@ export class CurseStrategy extends AbilityStrategy {
     enemies.sort((a, b) => (a.status.curse ? +1 : b.hp - a.hp))
     const enemyWithHighestHP = enemies[0]
     const curseDelay =
-      ([8000, 4000][pokemon.stars - 1] ?? 4000) * (1 - (0.2 * pokemon.ap) / 100)
+      ([8000, 5000, 3000][pokemon.stars - 1] ?? 3000) *
+      (1 - (0.2 * pokemon.ap) / 100)
     enemyWithHighestHP.status.triggerCurse(curseDelay)
   }
 }
@@ -8802,7 +8825,7 @@ export class PsystrikeStrategy extends AbilityStrategy {
       cells.forEach((cell) => {
         if (cell.value && cell.value.team != pokemon.team) {
           cell.value.handleSpecialDamage(
-            100,
+            80,
             board,
             AttackType.PHYSICAL,
             pokemon,
@@ -10608,7 +10631,7 @@ export class FieryWrathStrategy extends AbilityStrategy {
     crit: boolean
   ) {
     super.process(pokemon, state, board, target, crit, true)
-    const damage = 40
+    const damage = 33
 
     board.forEach((x: number, y: number, value: PokemonEntity | undefined) => {
       if (value && pokemon.team != value.team) {
@@ -11302,6 +11325,7 @@ export const AbilityStrategies: { [key in Ability]: AbilityStrategy } = {
   [Ability.KING_SHIELD]: new KingShieldStrategy(),
   [Ability.U_TURN]: new UTurnStrategy(),
   [Ability.EXPLOSION]: new ExplosionStrategy(),
+  [Ability.CHLOROBLAST]: new ChloroblastStrategy(),
   [Ability.NIGHTMARE]: new NightmareStrategy(),
   [Ability.CLANGOROUS_SOUL]: new ClangorousSoulStrategy(),
   [Ability.BONEMERANG]: new BonemerangStrategy(),
