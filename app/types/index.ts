@@ -34,6 +34,7 @@ import { Passive } from "./enum/Passive"
 import { Pkm, PkmProposition } from "./enum/Pokemon"
 import { Synergy } from "./enum/Synergy"
 import { Weather } from "./enum/Weather"
+import { PokemonEntity } from "../core/pokemon-entity"
 
 export * from "./enum/Emotion"
 
@@ -652,7 +653,6 @@ export interface ICount {
   soundCount: number
   fairyCritCount: number
   attackCount: number
-  growGroundCount: number
   fightingBlockCount: number
   dodgeCount: number
   powerLensCount: number
@@ -798,4 +798,16 @@ export interface IAttackEvent {
   targetY: number
   travelTime: number
   delay: number
+}
+
+export interface IEffect {
+  origin?: Effect
+  update?: (dt: number, entity: PokemonEntity) => void
+}
+
+export interface IPeriodicEffect extends IEffect {
+  intervalMs: number
+  timer: number
+  applyPeriodicEffect: (entity: PokemonEntity) => void
+  update: (dt: number, entity: PokemonEntity) => void
 }

@@ -639,6 +639,12 @@ export default abstract class PokemonState {
     this.updateCommands(pokemon, dt)
     pokemon.status.updateAllStatus(dt, pokemon, board)
 
+    pokemon.effectsSet.forEach((effect) => {
+      if (effect.update){
+        effect.update(dt, pokemon)
+      }
+    })
+
     if (
       (pokemon.status.resurecting ||
         pokemon.status.freeze ||
@@ -646,45 +652,6 @@ export default abstract class PokemonState {
       pokemon.state.name !== "idle"
     ) {
       pokemon.toIdleState()
-    }
-
-    if (
-      pokemon.effects.has(Effect.TILLER) ||
-      pokemon.effects.has(Effect.DIGGER) ||
-      pokemon.effects.has(Effect.DRILLER) ||
-      pokemon.effects.has(Effect.DEEP_MINER)
-    ) {
-      pokemon.growGroundTimer -= dt
-      if (pokemon.growGroundTimer <= 0 && pokemon.count.growGroundCount < 5) {
-        pokemon.growGroundTimer = 3000
-        pokemon.count.growGroundCount += 1
-        if (pokemon.effects.has(Effect.TILLER)) {
-          pokemon.addDefense(1, pokemon, 0, false)
-          pokemon.addSpecialDefense(1, pokemon, 0, false)
-          pokemon.addAttack(1, pokemon, 0, false)
-        } else if (pokemon.effects.has(Effect.DIGGER)) {
-          pokemon.addDefense(2, pokemon, 0, false)
-          pokemon.addSpecialDefense(2, pokemon, 0, false)
-          pokemon.addAttack(2, pokemon, 0, false)
-        } else if (pokemon.effects.has(Effect.DRILLER)) {
-          pokemon.addDefense(3, pokemon, 0, false)
-          pokemon.addSpecialDefense(3, pokemon, 0, false)
-          pokemon.addAttack(3, pokemon, 0, false)
-        } else if (pokemon.effects.has(Effect.DEEP_MINER)) {
-          pokemon.addDefense(4, pokemon, 0, false)
-          pokemon.addSpecialDefense(4, pokemon, 0, false)
-          pokemon.addAttack(4, pokemon, 0, false)
-        }
-
-        if (
-          pokemon.items.has(Item.BIG_NUGGET) &&
-          pokemon.count.growGroundCount === 5 &&
-          player
-        ) {
-          player.addMoney(3, true, pokemon)
-          pokemon.count.moneyCount += 3
-        }
-      }
     }
 
     if (
