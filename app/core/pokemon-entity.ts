@@ -13,7 +13,8 @@ import {
   IPokemon,
   IPokemonEntity,
   Title,
-  Transfer
+  Transfer,
+  IEffect
 } from "../types"
 import {
   ARMOR_FACTOR,
@@ -116,13 +117,13 @@ export class PokemonEntity extends Schema implements IPokemonEntity {
   shieldDamageTaken: number
   shieldDone: number
   flyingProtection = 0
-  growGroundTimer = 3000
   grassHealCooldown = 2000
   sandstormDamageTimer = 0
   fairySplashCooldown = 0
   isClone = false
   refToBoardPokemon: IPokemon
   commands = new Array<SimulationCommand>()
+  effectsSet = new Set<IEffect>()
 
   constructor(
     pokemon: IPokemon,
@@ -625,8 +626,11 @@ export class PokemonEntity extends Schema implements IPokemonEntity {
     const default_types = getPokemonData(this.name).types
     if (type && !default_types.includes(type)) {
       this.types.delete(type)
-      SynergyEffects[type].forEach((effect) => {
-        this.effects.delete(effect)
+      SynergyEffects[type].forEach((effectName) => {
+        this.effects.delete(effectName)
+        this.effectsSet.forEach((effect) => {
+          if (effect.origin === effectName) this.effectsSet.delete(effect)
+        })
       })
     }
 
@@ -1942,6 +1946,18 @@ export class PokemonEntity extends Schema implements IPokemonEntity {
     ) {
       this.player.items.push(Item.BERRY_JUICE)
     }
+  }
+
+  transferAbility(name: Ability | string) {
+    this.simulation.room.broadcast(Transfer.ABILITY, {
+      id: this.simulation.id,
+      skill: name,
+      positionX: this.positionX,
+      positionY: this.positionY,
+      targetX: this.targetX,
+      targetY: this.targetY,
+      orientation: this.orientation
+    })
   }
 }
 
