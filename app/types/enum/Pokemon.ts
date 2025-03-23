@@ -516,7 +516,9 @@ export enum Pkm {
   MORGREM = "MORGREM",
   MORPEKO = "MORPEKO",
   MORPEKO_HANGRY = "MORPEKO_HANGRY",
-  MOTHIM = "MOTHIM",
+  MOTHIM_GRASS = "MOTHIM_GRASS",
+  MOTHIM_GROUND = "MOTHIM_GROUND",
+  MOTHIM_ARTIFICIAL = "MOTHIM_ARTIFICIAL",
   MR_MIME = "MR_MIME",
   MUDKIP = "MUDKIP",
   MUK = "MUK",
@@ -1442,7 +1444,9 @@ export const PkmIndex: { [key in Pkm]: string } = {
   [Pkm.WORMADAM_PLANT]: "0413",
   [Pkm.WORMADAM_SANDY]: "0413-0001",
   [Pkm.WORMADAM_TRASH]: "0413-0002",
-  [Pkm.MOTHIM]: "0414",
+  [Pkm.MOTHIM_GRASS]: "0414",
+  [Pkm.MOTHIM_GROUND]: "0414-0001",
+  [Pkm.MOTHIM_ARTIFICIAL]: "0414-0002",
   [Pkm.COMBEE]: "0415",
   [Pkm.VESPIQUEEN]: "0416",
   //[Pkm.PACHIRISU]: "0417",
@@ -2881,7 +2885,9 @@ export const PkmFamily: { [key in Pkm]: Pkm } = {
   [Pkm.WORMADAM_PLANT]: Pkm.BURMY_PLANT,
   [Pkm.WORMADAM_SANDY]: Pkm.BURMY_SANDY,
   [Pkm.WORMADAM_TRASH]: Pkm.BURMY_TRASH,
-  [Pkm.MOTHIM]: Pkm.BURMY_PLANT, // NOTE: converging evolution
+  [Pkm.MOTHIM_GRASS]: Pkm.BURMY_PLANT,
+  [Pkm.MOTHIM_GROUND]: Pkm.BURMY_SANDY,
+  [Pkm.MOTHIM_ARTIFICIAL]: Pkm.BURMY_TRASH,
   [Pkm.WOOPER]: Pkm.WOOPER,
   [Pkm.QUAGSIRE]: Pkm.WOOPER,
   [Pkm.PALDEA_WOOPER]: Pkm.PALDEA_WOOPER,
@@ -7077,7 +7083,17 @@ export const AnimationConfig: {
     ability: AnimationType.Swing,
     emote: AnimationType.Shake
   },
-  [Pkm.MOTHIM]: {
+  [Pkm.MOTHIM_GRASS]: {
+    attack: AnimationType.Attack,
+    ability: AnimationType.Swing,
+    emote: AnimationType.Hover
+  },
+  [Pkm.MOTHIM_GROUND]: {
+    attack: AnimationType.Attack,
+    ability: AnimationType.Swing,
+    emote: AnimationType.Hover
+  },
+  [Pkm.MOTHIM_ARTIFICIAL]: {
     attack: AnimationType.Attack,
     ability: AnimationType.Swing,
     emote: AnimationType.Hover

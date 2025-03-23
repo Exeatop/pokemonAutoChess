@@ -9815,22 +9815,6 @@ const rksSystemOnChangePosition = function (
   }
 }
 
-const evolveMothim = function (params: {
-  this: Pokemon
-  pokemonEvolved: Pokemon
-  pokemonsBeforeEvolution: Pokemon[]
-  player: Player
-}) {
-  const preEvolve = params.pokemonsBeforeEvolution.at(-1)
-  if (preEvolve instanceof WormadamTrash) {
-    params.pokemonEvolved.types.add(Synergy.ARTIFICIAL)
-  } else if (preEvolve instanceof WormadamSandy) {
-    params.pokemonEvolved.types.add(Synergy.GROUND)
-  } else if (preEvolve instanceof WormadamPlant) {
-    params.pokemonEvolved.types.add(Synergy.GRASS)
-  }
-}
-
 export class TypeNull extends Pokemon {
   types = new SetSchema<Synergy>([Synergy.ARTIFICIAL])
   rarity = Rarity.UNIQUE
@@ -14837,7 +14821,7 @@ export class WormadamPlant extends Pokemon {
   types = new SetSchema<Synergy>([Synergy.BUG, Synergy.GRASS])
   rarity = Rarity.RARE
   stars = 2
-  evolution = Pkm.MOTHIM
+  evolution = Pkm.MOTHIM_GRASS
   hp = 150
   atk = 13
   speed = 46
@@ -14850,18 +14834,13 @@ export class WormadamPlant extends Pokemon {
   passive = Passive.ENVIRONMENTAL_ADAPTATION
   stages = 3
   regional = true
-  afterEvolve = evolveMothim
-  isInRegion(map: DungeonPMDO, state?: GameState) {
-    const regionSynergies = DungeonDetails[map]?.synergies
-    return regionSynergies.includes(Synergy.GRASS)
-  }
 }
 
 export class WormadamSandy extends Pokemon {
   types = new SetSchema<Synergy>([Synergy.BUG, Synergy.GROUND])
   rarity = Rarity.RARE
   stars = 2
-  evolution = Pkm.MOTHIM
+  evolution = Pkm.MOTHIM_GROUND
   hp = 150
   atk = 13
   speed = 46
@@ -14874,21 +14853,13 @@ export class WormadamSandy extends Pokemon {
   passive = Passive.ENVIRONMENTAL_ADAPTATION
   stages = 3
   regional = true
-  afterEvolve = evolveMothim
-  isInRegion(map: DungeonPMDO, state?: GameState) {
-    const regionSynergies = DungeonDetails[map]?.synergies
-    return (
-      regionSynergies.includes(Synergy.GROUND) &&
-      !regionSynergies.includes(Synergy.GRASS)
-    )
-  }
 }
 
 export class WormadamTrash extends Pokemon {
   types = new SetSchema<Synergy>([Synergy.BUG, Synergy.ARTIFICIAL])
   rarity = Rarity.RARE
   stars = 2
-  evolution = Pkm.MOTHIM
+  evolution = Pkm.MOTHIM_ARTIFICIAL
   hp = 150
   atk = 13
   speed = 46
@@ -14901,19 +14872,10 @@ export class WormadamTrash extends Pokemon {
   passive = Passive.ENVIRONMENTAL_ADAPTATION
   stages = 3
   regional = true
-  afterEvolve = evolveMothim
-  isInRegion(map: DungeonPMDO, state?: GameState) {
-    const regionSynergies = DungeonDetails[map]?.synergies
-    return (
-      regionSynergies.includes(Synergy.ARTIFICIAL) &&
-      !regionSynergies.includes(Synergy.GROUND) &&
-      !regionSynergies.includes(Synergy.GRASS)
-    )
-  }
 }
 
-export class Mothim extends Pokemon {
-  types = new SetSchema<Synergy>([Synergy.BUG, Synergy.FLYING])
+export class MothimGrass extends Pokemon {
+  types = new SetSchema<Synergy>([Synergy.BUG, Synergy.FLYING, Synergy.GRASS])
   rarity = Rarity.RARE
   stars = 3
   hp = 200
@@ -14928,11 +14890,42 @@ export class Mothim extends Pokemon {
   passive = Passive.MOTHIM
   stages = 3
   regional = true
-  isInRegion(map: DungeonPMDO, state?: GameState) {
-    // always hide mothim to avoid showing duplicated with other burmy forms
-    // this does not impact the evolution of wormadam
-    return false
-  }
+}
+
+export class MothimGround extends Pokemon {
+  types = new SetSchema<Synergy>([Synergy.BUG, Synergy.FLYING, Synergy.GROUND])
+  rarity = Rarity.RARE
+  stars = 3
+  hp = 200
+  atk = 20
+  speed = 46
+  def = 6
+  speDef = 6
+  maxPP = 80
+  range = 2
+  skill = Ability.QUIVER_DANCE
+  attackSprite = AttackSprite.POISON_RANGE
+  passive = Passive.MOTHIM
+  stages = 3
+  regional = true
+}
+
+export class MothimArtificial extends Pokemon {
+  types = new SetSchema<Synergy>([Synergy.BUG, Synergy.FLYING, Synergy.ARTIFICIAL])
+  rarity = Rarity.RARE
+  stars = 3
+  hp = 200
+  atk = 20
+  speed = 46
+  def = 6
+  speDef = 6
+  maxPP = 80
+  range = 2
+  skill = Ability.QUIVER_DANCE
+  attackSprite = AttackSprite.POISON_RANGE
+  passive = Passive.MOTHIM
+  stages = 3
+  regional = true
 }
 
 export class Wooper extends Pokemon {
@@ -18524,7 +18517,9 @@ export const PokemonClasses: Record<
   [Pkm.WORMADAM_PLANT]: WormadamPlant,
   [Pkm.WORMADAM_SANDY]: WormadamSandy,
   [Pkm.WORMADAM_TRASH]: WormadamTrash,
-  [Pkm.MOTHIM]: Mothim,
+  [Pkm.MOTHIM_GRASS]: MothimGrass,
+  [Pkm.MOTHIM_GROUND]: MothimGround,
+  [Pkm.MOTHIM_ARTIFICIAL]: MothimArtificial,
   [Pkm.WOOPER]: Wooper,
   [Pkm.QUAGSIRE]: Quagsire,
   [Pkm.PALDEA_WOOPER]: PaldeaWooper,
